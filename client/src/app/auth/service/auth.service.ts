@@ -9,7 +9,7 @@ import {BehaviorSubject, Observable} from "rxjs/index";
 import {Router} from "@angular/router";
 import {Store} from "@ngrx/store";
 import {AppState} from "../../reducers";
-import {Login} from "../auth.actions";
+import {Login, Logout} from "../auth.actions";
 
 
 
@@ -43,10 +43,9 @@ export class AuthService {
    *
    */
   logout(){
-    localStorage.clear();
     clearTimeout(this.tokenTimer);
     this.loggedInUserSubject.next(null);
-    this.router.navigate(['/login']);
+    this.store.dispatch(new Logout());
   }
   /**
    * login

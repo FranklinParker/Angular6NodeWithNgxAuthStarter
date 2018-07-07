@@ -5,12 +5,15 @@ import {SharedModule} from "../shared/shared.module";
 import { SignupComponent } from './components/signup/signup.component';
 import { StoreModule } from '@ngrx/store';
 import * as fromAuth from './auth.reducer';
+import { EffectsModule } from '@ngrx/effects';
+import { AuthEffects } from './auth.effects';
 
 @NgModule({
   imports: [
     CommonModule,
     SharedModule,
-    StoreModule.forFeature('auth', fromAuth.reducer)
+    StoreModule.forFeature('auth', fromAuth.reducer),
+    EffectsModule.forFeature([AuthEffects])
   ],
   declarations: [
     LoginComponent,
