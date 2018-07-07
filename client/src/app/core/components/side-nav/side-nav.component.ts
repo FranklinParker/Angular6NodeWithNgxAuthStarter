@@ -1,6 +1,9 @@
 import {Component, OnInit, EventEmitter, Output, OnDestroy} from '@angular/core';
 import {AuthService} from "../../../auth/service/auth.service";
 import {LoggedInUser} from "../../../auth/model/loggedInUser";
+import {Store} from "@ngrx/store";
+import {AppState} from "../../../reducers";
+import {isLoggedIn, selectLoggedInUser} from "../../../auth/auth.selector";
 
 @Component({
   selector: 'app-side-nav',
@@ -11,27 +14,29 @@ export class SideNavComponent implements OnInit, OnDestroy {
   @Output('closeSideNav') closeSideNav = new EventEmitter();
   userLoggedIn: boolean;
 
-  constructor(private authService: AuthService) { }
+  constructor(private authService: AuthService,
+              private store: Store<AppState>) {
+  }
 
   ngOnInit() {
-    this.authService.getUserLoggedInUserObservable()
-      .subscribe((loggedInUser:LoggedInUser)=>{
-        this.userLoggedIn = !!loggedInUser;
-        console.log('userLoggedIn:' + this.userLoggedIn);
-      });
+
+    this.store.select(isLoggedIn)
+      .subscribe((loggedIn) => {
+        this.userLoggedIn = loggedIn;
+      })
 
   }
 
-  ngOnDestroy(){
+  ngOnDestroy() {
     console.log('side nav destroyed');
   }
 
 
-  onSidenavClose(){
+  onSidenavClose() {
     this.closeSideNav.emit();
   }
 
-  onLogout(){
+  onLogout() {
     this.authService.logout();
     this.onSidenavClose();
   }

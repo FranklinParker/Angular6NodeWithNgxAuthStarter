@@ -20,11 +20,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.authService.getUserLoggedInUserObservable()
-      .subscribe((loggedInUser: LoggedInUser) => {
-        this.loggedInUser = loggedInUser;
-        console.log('loggedInUser', loggedInUser);
-      });
+    /** get logged in user */
     this.store
       .pipe(
         select(selectLoggedInUser),
