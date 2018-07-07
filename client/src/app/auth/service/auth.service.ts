@@ -18,7 +18,6 @@ import {Login, Logout} from "../auth.actions";
 })
 export class AuthService {
 
-  private loggedInUserSubject = new BehaviorSubject<LoggedInUser>(null);
   private tokenTimer;
 
   private registerUrl = environment.apiUrl + 'register';
@@ -28,14 +27,7 @@ export class AuthService {
               private router: Router,
               private store: Store<AppState>) {
   }
-  /**
-   * get observabale for logged in user
-   *
-   * @returns {Observable<LoggedInUser>}
-   */
-  getUserLoggedInUserObservable(): Observable<LoggedInUser>{
-    return this.loggedInUserSubject.asObservable();
-  }
+
 
   /**
    * logout and navigate to login
@@ -44,7 +36,6 @@ export class AuthService {
    */
   logout(){
     clearTimeout(this.tokenTimer);
-    this.loggedInUserSubject.next(null);
     this.store.dispatch(new Logout());
   }
   /**
@@ -85,9 +76,7 @@ export class AuthService {
       if (result.success) {
         this.store.dispatch(new Login({ loggedInUser: result.user, token: result.token}));
         this.setTokenUser(result);
-        this.loggedInUserSubject.next(result['user']);
         this.setAuthTimer(result.expiresInSeconds*1000);
-        this.router.navigate(['/']);
       }
       return result;
     } catch (e) {
@@ -125,12 +114,8 @@ export class AuthService {
     const expiresTime = authData.expiresIn - currTime;
     if(expiresTime > 0){
       const loggedInUser: LoggedInUser = this.getUserLoggedInUser();
-      this.loggedInUserSubject.next(loggedInUser);
       this.setAuthTimer(expiresTime);
-      this.router.navigate(["/"]);
       this.store.dispatch(new Login({ loggedInUser: loggedInUser, token: authData.token}));
-
-
     }else{
      this.store.dispatch(new Logout());
     }

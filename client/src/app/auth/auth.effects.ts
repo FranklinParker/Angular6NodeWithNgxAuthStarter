@@ -16,8 +16,8 @@ export class AuthEffects {
   login$ = this.actions$.pipe(
     ofType<Login>(AuthActionTypes.LoginAction),
     tap(action =>{
-      console.log('got effects: payload', action.payload);
       localStorage.setItem("testUser", JSON.stringify(action.payload.loggedInUser))
+      this.router.navigate(['/']);
 
     } )
   );
@@ -26,7 +26,6 @@ export class AuthEffects {
   logout$ = this.actions$.pipe(
     ofType<Logout>(AuthActionTypes.LogoutAction),
     tap(action =>{
-      console.log('got effects: logout');
       localStorage.clear();
       this.router.navigate(['/login']);
 
