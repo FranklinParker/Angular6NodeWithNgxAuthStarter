@@ -1,6 +1,10 @@
 import {Component, OnInit, Output, EventEmitter, OnDestroy} from '@angular/core';
 import {AuthService} from "../../../auth/service/auth.service";
 import {LoggedInUser} from "../../../auth/model/loggedInUser";
+import {select, Store} from "@ngrx/store";
+import {AppState} from "../../../reducers";
+import {selectLoggedInUser} from "../../../auth/auth.selector";
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-header',
@@ -11,7 +15,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
   @Output('sidebarToggle') sidebarToggle = new EventEmitter<void>();
   loggedInUser: LoggedInUser;
 
-  constructor(private authService: AuthService) {
+  constructor(private authService: AuthService,
+              private store: Store<AppState>) {
   }
 
   ngOnInit() {
@@ -20,6 +25,14 @@ export class HeaderComponent implements OnInit, OnDestroy {
         this.loggedInUser = loggedInUser;
         console.log('loggedInUser', loggedInUser);
       });
+    this.store
+      .pipe(
+        select(selectLoggedInUser),
+        map(user=>{
+          this.loggedInUser = user;
+        })
+      ).subscribe();
+
   }
 
   ngOnDestroy() {

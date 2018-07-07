@@ -128,9 +128,11 @@ export class AuthService {
       this.loggedInUserSubject.next(loggedInUser);
       this.setAuthTimer(expiresTime);
       this.router.navigate(["/"]);
+      this.store.dispatch(new Login({ loggedInUser: loggedInUser, token: authData.token}));
+
 
     }else{
-     localStorage.clear();
+     this.store.dispatch(new Logout());
     }
 
   }
