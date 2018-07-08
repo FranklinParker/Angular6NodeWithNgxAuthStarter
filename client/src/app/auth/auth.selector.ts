@@ -20,3 +20,9 @@ export const selectLoggedInUser =  createSelector(
   selectAuthState,
   auth => auth.loggedInUser
 );
+
+
+export const selectToken =  createSelector(
+  selectAuthState,
+  auth => auth.token
+);
