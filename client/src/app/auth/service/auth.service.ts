@@ -18,8 +18,6 @@ import {AttemptLogin, Login, Logout} from "../auth.actions";
 })
 export class AuthService {
 
-  private tokenTimer;
-
   private registerUrl = environment.apiUrl + 'register';
   private loginUrl = environment.apiUrl + 'login';
 
@@ -35,7 +33,6 @@ export class AuthService {
    *
    */
   logout(){
-    clearTimeout(this.tokenTimer);
     this.store.dispatch(new Logout());
   }
   /**
@@ -91,28 +88,6 @@ export class AuthService {
 
 
   /**
-   * try to auto login user
-   *
-   */
-  autoAuthUser() {
-    this.store.dispatch(new AttemptLogin());
-    const authData = this.getAuthData();
-    if (!authData) {
-      return;
-    }
-    const currTime = new Date().getTime();
-    const expiresTime = authData.expiresIn - currTime;
-    if(expiresTime > 0){
-      const loggedInUser: LoggedInUser = this.getUserLoggedInUser();
-      this.store.dispatch(new Login({ loggedInUser: loggedInUser, token: authData.token,
-        expiresInSeconds: expiresTime/1000}));
-    }else{
-     this.store.dispatch(new Logout());
-    }
-
-  }
-
-  /**
    * gets token if it exists
    *
    */
@@ -120,17 +95,6 @@ export class AuthService {
     return localStorage.getItem('token');
   }
 
-  getAuthData(): { token: string, expiresIn: number}{
-    const token = localStorage.getItem('token');
-    const expiresIn = localStorage.getItem('expiresIn');
-    if(!token || !expiresIn){
-      return null;
-    }
-    return {
-      token: token,
-      expiresIn: +expiresIn
-    }
-  }
   /**
    * get loggedInUser from local storage
    *
