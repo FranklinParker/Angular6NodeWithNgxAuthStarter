@@ -6,9 +6,13 @@ export enum AuthActionTypes {
   LogoutAction = '[Logout] Action'
 }
 
+export interface LoggedInInfo {
+  loggedInUser: LoggedInUser, token: string, expiresInSeconds: number
+};
+
 export class Login implements Action {
 
-  constructor(public payload: { loggedInUser: LoggedInUser, token: string }){
+  constructor(public payload: LoggedInInfo){
 
   }
   readonly type = AuthActionTypes.LoginAction;

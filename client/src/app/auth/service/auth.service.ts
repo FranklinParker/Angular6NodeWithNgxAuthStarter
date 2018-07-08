@@ -74,12 +74,12 @@ export class AuthService {
           return result;
         })).toPromise();
       if (result.success) {
-        this.store.dispatch(new Login({ loggedInUser: result.user, token: result.token}));
-        this.setTokenUser(result);
-        this.setAuthTimer(result.expiresInSeconds*1000);
+        this.store.dispatch(new Login({ loggedInUser: result.user, token: result.token,
+          expiresInSeconds: result.expiresInSeconds}));
       }
       return result;
     } catch (e) {
+      this.store.dispatch(new Logout());
       return {
         success: false,
         message: ' Authentication Failed - system error'
@@ -88,18 +88,7 @@ export class AuthService {
     }
   }
 
-  /**
-   *
-   *
-   * @param {{token: string; user: LoggedInUser}} result
-   */
-  private setTokenUser(result) {
-    const currTime =  new Date().getTime();
-    const expiresInTime = currTime + (result.expiresInSeconds * 1000);
-    localStorage.setItem('loggedInUser', JSON.stringify(result.user));
-    localStorage.setItem('token', result.token);
-    localStorage.setItem('expiresIn','' + expiresInTime);
-  }
+
 
   /**
    * try to auto login user
@@ -114,21 +103,14 @@ export class AuthService {
     const expiresTime = authData.expiresIn - currTime;
     if(expiresTime > 0){
       const loggedInUser: LoggedInUser = this.getUserLoggedInUser();
-      this.setAuthTimer(expiresTime);
-      this.store.dispatch(new Login({ loggedInUser: loggedInUser, token: authData.token}));
+      this.store.dispatch(new Login({ loggedInUser: loggedInUser, token: authData.token,
+        expiresInSeconds: expiresTime/1000}));
     }else{
      this.store.dispatch(new Logout());
     }
 
   }
 
-
-  private setAuthTimer(duration: number){
-    this.tokenTimer = setTimeout(() => {
-      console.log("automatic timeout ");
-      this.logout();
-    }, duration );
-  }
   /**
    * gets token if it exists
    *
