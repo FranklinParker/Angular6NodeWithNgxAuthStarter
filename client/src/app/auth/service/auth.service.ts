@@ -9,7 +9,7 @@ import {BehaviorSubject, Observable} from "rxjs/index";
 import {Router} from "@angular/router";
 import {Store} from "@ngrx/store";
 import {AppState} from "../../reducers";
-import {Login, Logout} from "../auth.actions";
+import {AttemptLogin, Login, Logout} from "../auth.actions";
 
 
 
@@ -95,6 +95,7 @@ export class AuthService {
    *
    */
   autoAuthUser() {
+    this.store.dispatch(new AttemptLogin());
     const authData = this.getAuthData();
     if (!authData) {
       return;
