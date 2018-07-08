@@ -95,23 +95,7 @@ export class AuthService {
     return localStorage.getItem('token');
   }
 
-  /**
-   * get loggedInUser from local storage
-   *
-   * @returns {LoggedInUser}
-   */
-
-  getUserLoggedInUser(): LoggedInUser{
-    const loggedInUserStr = localStorage.getItem('loggedInUser');
-    if(loggedInUserStr){
-      const loggedInUser:LoggedInUser = JSON.parse(loggedInUserStr);
-      return loggedInUser;
-    }else{
-      return null;
-    }
-
-  }
-
+  
   /**
    * registers a user
    *
