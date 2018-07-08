@@ -1,6 +1,9 @@
 import {Component, OnInit} from '@angular/core';
 import {Contact} from "../../model/contact";
 import {ContactService} from "../../service/contact.service";
+import {Store} from "@ngrx/store";
+import {AppState} from "../../../reducers";
+import {ContactActionTypes, LoadAllContacts} from "../../contact.actions";
 
 @Component({
   selector: 'app-contact-main',
@@ -17,10 +20,12 @@ export class ContactMainComponent implements OnInit {
   };
   selectedTabIndex = 0;
 
-  constructor(private contactService: ContactService) {
+  constructor(private contactService: ContactService,
+              private store: Store<AppState>) {
   }
 
   async ngOnInit() {
+    this.store.dispatch(new LoadAllContacts());
     await this.contactService.getContacts(1, 5);
 
   }
