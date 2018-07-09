@@ -84,7 +84,6 @@ export class ContactService {
               })
             };
           })).toPromise();
-      console.log(' got contacts data', data);
       return data.contacts;
 
     } catch (e) {
