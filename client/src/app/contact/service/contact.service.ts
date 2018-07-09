@@ -66,7 +66,7 @@ export class ContactService {
    */
   async getAllContacts(): Promise<any> {
 
-    const url = this.getUrl ;
+    const url = this.getUrl;
     try {
       const data: { numberRecords: number, contacts: Contact[] } = await
         this.http.get<{ success: boolean, records: any, numberRecords: number }>(url)
@@ -111,40 +111,42 @@ export class ContactService {
    * @param {Contact} contact
    * @returns {Promise<any>}
    */
-  async saveNewContact(contact: Contact): Promise<{ success: boolean, message?: string }> {
+  async saveNewContact(contact: Contact): Promise<{ success: boolean, message?: string,record?:Contact }> {
     try {
       const result =
         await this.http.post<{ success: boolean, record?: any, numberRecords?: number, message?: string }>
-      (this.postUrl, contact)
-        .pipe(map(result => {
-          if(result.success){
-            return {
-              success: result.success,
-              numberRecords: result.numberRecords,
-              record: {
-                id: result.record._id,
-                firstName: result.record.firstName,
-                lastName: result.record.lastName,
-                email: result.record.email,
-                phone: result.record.phone
-              }
+        (this.postUrl, contact)
+          .pipe(map(result => {
+            if (result.success) {
+              return {
+                success: result.success,
+                numberRecords: result.numberRecords,
+                record: {
+                  id: result.record._id,
+                  firstName: result.record.firstName,
+                  lastName: result.record.lastName,
+                  email: result.record.email,
+                  phone: result.record.phone
+                }
 
-            };
-          } else{
-            return {
-              success: result.success,
-              message: result.message
+              };
+            } else {
+              return {
+                success: result.success,
+                message: result.message
 
-            };
-          }
+              };
+            }
 
-        })).toPromise();
+          })).toPromise();
       console.log('contact new save result', result);
-      if(result.success){
+      if (result.success) {
         this.contactList.push(result.record);
         this.contactListSubject.next(
-          { numberRecords: result.numberRecords,
-          contacts: this.contactList });
+          {
+            numberRecords: result.numberRecords,
+            contacts: this.contactList
+          });
       }
       return result;
     } catch (e) {

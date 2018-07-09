@@ -3,6 +3,10 @@ import {NgForm} from "@angular/forms";
 import {Contact} from "../../model/contact";
 import {ContactService} from "../../service/contact.service";
 import {MatSnackBar} from "@angular/material";
+import {Store} from "@ngrx/store";
+import {AppState} from "../../../reducers";
+import {ContactSaved, NewContactSaved} from "../../contact.actions";
+import {Update} from "@ngrx/entity";
 
 @Component({
   selector: 'app-contact',
@@ -16,7 +20,8 @@ export class ContactAddEditComponent implements OnInit {
 
 
   constructor(private contactService: ContactService,
-              private snackBar: MatSnackBar) {
+              private snackBar: MatSnackBar,
+              private store: Store<AppState>) {
   }
 
   get headerMessage() {
@@ -66,8 +71,10 @@ export class ContactAddEditComponent implements OnInit {
    */
 
   private async saveNewContact() {
-    const result: { success: boolean, message?: string } = await this.contactService.saveNewContact(this.contact);
+    const result: { success: boolean, message?: string, record?: Contact } = await this.contactService.saveNewContact(this.contact);
     if (result.success) {
+
+      this.store.dispatch(new NewContactSaved({ contact: result.record}));
       this.snackBar.open('New Contact Saved!', '', {
         duration: 5000
       });
