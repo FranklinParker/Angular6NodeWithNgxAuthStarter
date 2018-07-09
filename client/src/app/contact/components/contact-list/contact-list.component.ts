@@ -42,6 +42,7 @@ export class ContactListComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
   }
 
+
   sortField(field:string){
     console.log('this.sort', this.sort);
     console.log('this.sort.active', this.sort.active);
@@ -58,6 +59,18 @@ export class ContactListComponent implements OnInit, OnDestroy {
    */
   edit(contact: Contact){
     this.editContactEvent.emit(contact);
+  }
+
+  /**
+   * use the store to filter list
+   *
+   */
+  onFilterAllContacts(){
+    if(this.filterLastName && this.filterLastName.length>0){
+      this.getNewPage(this.currentPage-1, this.contactsPerPage, this.filterLastName);
+
+    }
+
   }
 
   /***
@@ -112,9 +125,9 @@ export class ContactListComponent implements OnInit, OnDestroy {
 
   }
 
-  private getNewPage(pageIndex: number, pageSize: number){
+  private getNewPage(pageIndex: number, pageSize: number,filterLastName?: string){
     this.store.select(
-      selectContactPage(pageIndex ,pageSize))
+      selectContactPage(pageIndex ,pageSize, filterLastName))
       .subscribe((contactPage)=>{
         console.log('selectContactPage', contactPage);
         this.contactList = contactPage.contacts;

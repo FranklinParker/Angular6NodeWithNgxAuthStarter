@@ -10,9 +10,10 @@
     <div *ngIf="contactList && contactList.length>0">
       <mat-form-field >
         <input matInput [(ngModel)]="filterLastName"
-               (keyup)="applyLastNameFilter($event.target.value)"
-               placeholder="Filter Contacts Last Name">
+               placeholder="Search All Contacts - Last Name">
       </mat-form-field>
+      <button mat-raised-button type='button'
+              (click)="onFilterAllContacts()">Search All Contacts</button>
       <mat-form-field >
         <input matInput [(ngModel)]="filterAll"
                (keyup)="applyAnyFilter($event.target.value)"

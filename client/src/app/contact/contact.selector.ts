@@ -14,30 +14,35 @@ export const isContactsLoaded = createSelector(
 export const getAllContacts = createSelector(
   selectContactState,
   fromContacts.selectAll
-
 );
 
 
-export const selectContactPage =  (page: number, nbrRecords: number) =>
-  createSelector(
-    getAllContacts,
-    contacts => {
-      if (!contacts || contacts.length === 0) {
-        return {
-          contacts: [],
-          totalRecords: 0
+export const selectContactPage =
+  (page: number, nbrRecords: number, lastNameFilter?: string) =>
+    createSelector(
+      getAllContacts,
+      contacts => {
+        if (!contacts || contacts.length === 0) {
+          return {
+            contacts: [],
+            totalRecords: 0
+          }
         }
-      } else {
-        const start = page*nbrRecords;
+        if (lastNameFilter) {
+          contacts = contacts.filter(contact => contact.lastName.lastIndexOf(lastNameFilter) > -1)
+        }
+
+
+        const start = page * nbrRecords;
         const end = start + nbrRecords;
 
         return {
-          contacts: contacts.slice(start,end),
+          contacts: contacts.slice(start, end),
           totalRecords: contacts.length
         }
-      }
 
-    }
-  );
+
+      }
+    );
 
 
