@@ -23,7 +23,7 @@ export class ContactService {
    *
    * @returns {Promise<any>}
    */
-  async getContacts(currentPage: number, pageSize: number): Promise<any> {
+  async getContacts(currentPage?: number, pageSize?: number): Promise<any> {
 
     const queryParams = `?pageSize=${pageSize}&currentPage=${currentPage}`;
     console.log('queryParams', queryParams);
@@ -54,6 +54,42 @@ export class ContactService {
         });
     } catch (e) {
       console.log('error getting contacts', e);
+    }
+
+
+  }
+
+  /**
+   * get contact records and number of records
+   *
+   * @returns {Promise<any>}
+   */
+  async getAllContacts(): Promise<any> {
+
+    const url = this.getUrl ;
+    try {
+      const data: { numberRecords: number, contacts: Contact[] } = await
+        this.http.get<{ success: boolean, records: any, numberRecords: number }>(url)
+          .pipe(map(contactData => {
+            return {
+              numberRecords: contactData.numberRecords,
+              contacts: contactData.records.map(record => {
+                return {
+                  id: record._id,
+                  lastName: record.lastName,
+                  firstName: record.firstName,
+                  phone: record.phone,
+                  email: record.email
+                };
+              })
+            };
+          })).toPromise();
+      console.log(' got contacts data', data);
+      return data.contacts;
+
+    } catch (e) {
+      console.log('error getting contacts', e);
+      return [];
     }
 
 
