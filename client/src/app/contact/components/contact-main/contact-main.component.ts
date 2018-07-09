@@ -27,11 +27,8 @@ export class ContactMainComponent implements OnInit {
 
   async ngOnInit() {
     this.store.dispatch(new LoadAllContacts());
-    this.store.select(selectContactPage(1,3))
-      .subscribe((result)=>{
-        console.log('selectContactPage', result);
-      });
-    await this.contactService.getContacts(1, 5);
+
+    //await this.contactService.getContacts(1, 5);
 
   }
 

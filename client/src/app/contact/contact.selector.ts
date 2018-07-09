@@ -18,19 +18,21 @@ export const getAllContacts = createSelector(
 );
 
 
-export const selectContactPage =  (startRec: number, nbrRecords: number) =>
+export const selectContactPage =  (page: number, nbrRecords: number) =>
   createSelector(
     getAllContacts,
     contacts => {
-      console.log('contacts', contacts);
       if (!contacts || contacts.length === 0) {
         return {
           contacts: [],
           totalRecords: 0
         }
       } else {
+        const start = page*nbrRecords;
+        const end = start + nbrRecords;
+
         return {
-          contacts: contacts.slice(startRec, nbrRecords),
+          contacts: contacts.slice(start,end),
           totalRecords: contacts.length
         }
       }

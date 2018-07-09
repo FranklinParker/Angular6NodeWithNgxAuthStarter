@@ -1,8 +1,10 @@
 import {Component, OnInit, Input, OnDestroy, ViewChild, EventEmitter, Output} from '@angular/core';
 import {Contact} from "../../model/contact";
 import {ContactService} from "../../service/contact.service";
-import {Subscription} from "rxjs/index";
 import {MatTableDataSource, MatPaginator, PageEvent, MatSort} from "@angular/material";
+import {selectContactPage} from "../../contact.selector";
+import {Store} from "@ngrx/store";
+import {AppState} from "../../../reducers";
 
 @Component({
   selector: 'app-contact-list',
@@ -20,7 +22,6 @@ export class ContactListComponent implements OnInit, OnDestroy {
 
   contactList: Contact[] = [];
   filteredContactList: Contact[] = [];
-  contactListSubs: Subscription;
   dataSource = new MatTableDataSource<Contact>([]);
   displayedColumns = ['firstName','lastName','email', 'phone'];
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -29,22 +30,16 @@ export class ContactListComponent implements OnInit, OnDestroy {
   @Output() editContactEvent = new EventEmitter<Contact>();
   selectedContactId: string;
 
-  constructor(private contactService: ContactService) {
+  constructor(private contactService: ContactService,
+              private store: Store<AppState>) {
   }
 
   ngOnInit() {
-    this.contactListSubs = this.contactService.getContactListObservable()
-      .subscribe((result:{contacts: Contact[], numberRecords: number}) => {
-        this.contactList = result.contacts;
-        this.dataSource.data = this.contactList;
-        this.totalContacts = result.numberRecords;
-      });
-
+    this.getNewPage(0,5);
 
   }
 
   ngOnDestroy() {
-    this.contactListSubs.unsubscribe();
   }
 
   sortField(field:string){
@@ -113,7 +108,20 @@ export class ContactListComponent implements OnInit, OnDestroy {
     this.isLoading = true;
     this.currentPage = pageData.pageIndex + 1;
     this.contactsPerPage = pageData.pageSize;
-    this.contactService.getContacts(this.currentPage, this.contactsPerPage);
+    this.getNewPage(pageData.pageIndex, pageData.pageSize);
+
+  }
+
+  private getNewPage(pageIndex: number, pageSize: number){
+    this.store.select(
+      selectContactPage(pageIndex ,pageSize))
+      .subscribe((contactPage)=>{
+        console.log('selectContactPage', contactPage);
+        this.contactList = contactPage.contacts;
+        this.dataSource.data = this.contactList;
+        this.totalContacts = contactPage.totalRecords;
+
+      });
 
   }
 
