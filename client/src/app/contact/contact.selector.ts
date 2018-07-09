@@ -18,7 +18,7 @@ export const getAllContacts = createSelector(
 );
 
 
-export const selectContactPage = (startRec: number, nbrRecords: number) =>
+export const selectContactPage =  (startRec: number, nbrRecords: number) =>
   createSelector(
     getAllContacts,
     contacts => {
