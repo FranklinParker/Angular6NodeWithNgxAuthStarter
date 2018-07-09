@@ -26,3 +26,12 @@ export function reducer(state = initialState, action: ContactActions): ContactSt
       return state;
   }
 }
+
+
+export const {
+  selectAll,
+  selectEntities,
+  selectIds,
+  selectTotal
+
+} = adapter.getSelectors();

@@ -4,6 +4,7 @@ import {ContactService} from "../../service/contact.service";
 import {Store} from "@ngrx/store";
 import {AppState} from "../../../reducers";
 import {ContactActionTypes, LoadAllContacts} from "../../contact.actions";
+import {selectContactPage} from "../../contact.selector";
 
 @Component({
   selector: 'app-contact-main',
@@ -26,6 +27,10 @@ export class ContactMainComponent implements OnInit {
 
   async ngOnInit() {
     this.store.dispatch(new LoadAllContacts());
+    this.store.select(selectContactPage(1,3))
+      .subscribe((result)=>{
+        console.log('selectContactPage', result);
+      });
     await this.contactService.getContacts(1, 5);
 
   }
