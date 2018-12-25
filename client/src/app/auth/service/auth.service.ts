@@ -12,7 +12,6 @@ import {AppState} from "../../reducers";
 import {AttemptLogin, Login, Logout} from "../auth.actions";
 
 
-
 @Injectable({
   providedIn: 'root'
 })
@@ -20,6 +19,7 @@ export class AuthService {
 
   private registerUrl = environment.apiUrl + 'register';
   private loginUrl = environment.apiUrl + 'login';
+  private updateUserUrl = environment.apiUrl + 'user';
 
   constructor(private http: HttpClient,
               private router: Router,
@@ -32,9 +32,10 @@ export class AuthService {
    *
    *
    */
-  logout(){
+  logout() {
     this.store.dispatch(new Logout());
   }
+
   /**
    * login
    *
@@ -44,18 +45,20 @@ export class AuthService {
    * @returns {Promise<any>}
    */
 
-  async login(email: string, password): Promise<{ success: boolean, message?: string}> {
+  async login(email: string, password): Promise<{ success: boolean, message?: string }> {
     const body = {
       email,
       password
     };
     try {
       const result: { success: boolean, token?: string, user?: LoggedInUser, expiresInSeconds?: number }
-      = await this.http.post<LoginResult>(this.loginUrl, body)
+        = await this.http.post<LoginResult>(this.loginUrl, body)
         .pipe(map((result: LoginResult) => {
           if (result.success) {
-            const mapResult: { success: boolean, token: string,
-              user: LoggedInUser, expiresInSeconds: number } = {
+            const mapResult: {
+              success: boolean, token: string,
+              user: LoggedInUser, expiresInSeconds: number
+            } = {
               success: true,
               token: result.token,
               expiresInSeconds: result.expiresInSeconds,
@@ -71,8 +74,10 @@ export class AuthService {
           return result;
         })).toPromise();
       if (result.success) {
-        this.store.dispatch(new Login({ loggedInUser: result.user, token: result.token,
-          expiresInSeconds: result.expiresInSeconds}));
+        this.store.dispatch(new Login({
+          loggedInUser: result.user, token: result.token,
+          expiresInSeconds: result.expiresInSeconds
+        }));
       }
       return result;
     } catch (e) {
@@ -83,15 +88,15 @@ export class AuthService {
       };
 
     }
-  }
 
+  }
 
 
   /**
    * gets token if it exists
    *
    */
-  getToken(){
+  getToken() {
     return localStorage.getItem('token');
   }
 
@@ -117,6 +122,29 @@ export class AuthService {
         error: e
       };
 
+    }
+  }
+
+  /**
+   * update a user
+   *
+   * @param data
+   * @returns {Promise<any>}
+   */
+  public async updateUser(data): Promise<any> {
+    console.log('updateuser', data);
+    try {
+      const result = await this.http
+        .put<{ success: boolean, message?: string, record?: RegistrationModel }>(this.updateUserUrl, data)
+        .pipe(map(result => {
+          return result;
+        })).toPromise();
+      return result;
+    } catch (e) {
+      return {
+        success: false,
+        error: e
+      };
     }
   }
 }

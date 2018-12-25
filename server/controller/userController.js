@@ -10,60 +10,92 @@ const findUserConfirmPassword = require('../models/User').findUserConfirmPasswor
  * @returns {Promise<*>}
  */
 const registerUser = async (params) => {
-	const userData = params.actionData;
+  const userData = params.actionData;
 
-	try {
-		const userSearchRec = await User.findOne({email: userData.email });
+  try {
+    const userSearchRec = await User.findOne({email: userData.email});
 
-		if(userSearchRec){
-			return {
-				success: false,
-				message: 'This Email/user exists'
-			};
-		}
-		const user = new User({
-			firstName: userData.firstName,
-			lastName: userData.lastName,
-			email: userData.email,
-			password: userData.password
-		});
-		const userRecord = await user.save();
-		return {
-			success: true,
-			record: userRecord
-		};
-	} catch (e) {
-		return {
-			success: false,
-			message: e.message
-		};
-	}
+    if (userSearchRec) {
+      return {
+        success: false,
+        message: 'This Email/user exists'
+      };
+    }
+    const user = new User({
+      firstName: userData.firstName,
+      lastName: userData.lastName,
+      email: userData.email,
+      password: userData.password
+    });
+    const userRecord = await user.save();
+    return {
+      success: true,
+      record: userRecord
+    };
+  } catch (e) {
+    return {
+      success: false,
+      message: e.message
+    };
+  }
+}
 
-};
+/**
+ * user a user making sure the email does  exist
+ *
+ *
+ * @param params
+ * @returns {Promise<*>}
+ */
+const updateUser = async (params) => {
+  const userData = params.actionData;
+
+  try {
+
+    const user = await User.findById(userData.id);
+    console.log('user', user);
+    user.firstName = userData.firstName;
+    user.lastName = userData.lastName;
+    user.password = userData.password;
+    const userRecord = await user.save();
+
+    return {
+      success: true,
+      record: userRecord
+    };
+  } catch (e) {
+    return {
+      success: false,
+      message: e.message
+    };
+  }
+
+}
 /**
  * login and get a token
  *
  * @param params
  * @returns {Promise<*>}
  */
-const login = async (params)=>{
-	const user =  params.actionData;
-	try{
-		const loginResult = await findUserConfirmPassword(user.email,user.password);
-		console.log('loginResult', loginResult);
-		return loginResult;
-	}catch(e){
-		console.log('error', e);
-		return {
-			success: false,
-			message: e
-		};
-	}
+const login = async (params) => {
+  const user = params.actionData;
+  try {
+    const loginResult = await findUserConfirmPassword(user.email, user.password);
+    console.log('loginResult', loginResult);
+    return loginResult;
+  } catch (e) {
+    console.log('error', e);
+    return {
+      success: false,
+      message: e
+    };
+  }
 }
 
 module.exports = {
-	registerUser,
-	login
+  registerUser,
+  login,
+  updateUser
 }
 
 

@@ -7,6 +7,7 @@ import { StoreModule } from '@ngrx/store';
 import * as fromAuth from './auth.reducer';
 import { EffectsModule } from '@ngrx/effects';
 import { AuthEffects } from './auth.effects';
+import { UpdateUserComponent } from './components/update-user/update-user.component';
 
 @NgModule({
   imports: [
@@ -17,11 +18,13 @@ import { AuthEffects } from './auth.effects';
   ],
   declarations: [
     LoginComponent,
-    SignupComponent
+    SignupComponent,
+    UpdateUserComponent
   ],
   exports: [
     LoginComponent,
-    SignupComponent
+    SignupComponent,
+    UpdateUserComponent
   ]
 })
 export class AuthModule { }

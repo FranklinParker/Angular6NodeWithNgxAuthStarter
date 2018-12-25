@@ -29,6 +29,11 @@
       </li>
     </ul>
     <ul *ngIf="loggedInUser" fxLayout fxLayoutGap="10px" class="navigation-list-items">
+      <li><a routerLink="/updateuser" mat-button
+             routerLinkActive="mat-accent">Profile</a>
+      </li>
+    </ul>
+    <ul *ngIf="loggedInUser" fxLayout fxLayoutGap="10px" class="navigation-list-items">
       <li><a mat-stroked-button (click)="onLogout()">Logout</a>
       </li>
     </ul>
